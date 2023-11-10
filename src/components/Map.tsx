@@ -22,30 +22,42 @@ export default function Map() {
 		});
 
 		map.current.on('move', () => {
-			setLng(map?.current?.getCenter().lng.toFixed(4));
-			setLat(map?.current?.getCenter().lat.toFixed(4));
-			setZoom(map?.current?.getZoom().toFixed(2));
+			setLng(map.current.getCenter().lng.toFixed(4));
+			setLat(map.current.getCenter().lat.toFixed(4));
+			setZoom(map.current.getZoom().toFixed(2));
 		});
 
 		map.current.on('load', () => {
-			map?.current?.addLayer({
-				id: 'historical-places',
-				type: 'circle',
-				source: {
-					type: 'vector',
-					url: 'mapbox://ljkelsall.74ym3hvl'
+			map.current.addLayer({
+				'id': 'london-trees-data',
+				'type': 'circle',
+				'source': {
+					'type': 'vector',
+					'url': 'mapbox://ljkelsall.74ym3hvl'
 				},
 				'source-layer': 'TreeData1-197v8y',
+				'paint': {
+					'circle-radius': [
+						'interpolate',
+						['linear'],
+						['zoom'],
+						12, // at zoom level 12,
+						5, // circle radius is 5
+						15, // at zoom level 15,
+						10 // circle radius is 10
+					],
+					'circle-opacity': 0.4,
+					'circle-color': 'rgb(0, 128, 0)'
+				}
 			});
 		});
-	});
 
-	return (
-		<div>
-			<div className="sidebar">
-				Longitude: {lng} | Latitude: {lat} | Zoom: {zoom}
+		return (
+			<div>
+				<div className="sidebar">
+					Longitude: {lng} | Latitude: {lat} | Zoom: {zoom}
+				</div>
+				<div ref={mapContainer} className="map-container" />
 			</div>
-			<div ref={mapContainer} className="map-container" />
-		</div>
-	);
-}
+		);
+	}
