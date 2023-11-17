@@ -22,21 +22,60 @@ export default function Map() {
 		});
 
 		map.current.on('move', () => {
-			setLng(map?.current?.getCenter().lng.toFixed(4));
-			setLat(map?.current?.getCenter().lat.toFixed(4));
-			setZoom(map?.current?.getZoom().toFixed(2));
+			setLng(map.current.getCenter().lng.toFixed(4));
+			setLat(map.current.getCenter().lat.toFixed(4));
+			setZoom(map.current.getZoom().toFixed(2));
 		});
 
 		map.current.on('load', () => {
-			map?.current?.addLayer({
-				id: 'historical-places',
-				type: 'circle',
-				source: {
-					type: 'vector',
-					url: 'mapbox://ljkelsall.74ym3hvl'
+			map.current.addLayer({
+				'id': 'london-trees-data',
+				'type': 'circle',
+				'source': {
+					'type': 'vector',
+					'url': 'mapbox://ljkelsall.9dfje61y'
 				},
-				'source-layer': 'TreeData1-197v8y',
+				'source-layer': 'Borough_tree_list_2021July_tr-4yabe5',
+				'paint': {
+					'circle-radius': [
+						'interpolate',
+						['linear'],
+						['zoom'],
+						12, // at zoom level 12,
+						5, // circle radius is 5
+						15, // at zoom level 15,
+						10 // circle radius is 10
+					],
+					'circle-opacity': 0.4,
+					'circle-color': 'rgb(0, 128, 0)'
+				}
 			});
+		});
+
+		// When a click event occurs on a feature in the london-trees-data layer, open a popup at the
+		// location of the feature, with description HTML from its properties.
+		map.current.on('click', 'london-trees-data', (e: any) => {
+			// Copy coordinates array.
+			const coordinates = e.features[0].geometry.coordinates.slice();
+			const taxon_name = e.features[0].properties.taxon_name;
+			const common_name = e.features[0].properties.common_name;
+			const objectid = e.features[0].properties.objectid;
+
+			new mapboxgl.Popup()
+				.setLngLat(coordinates)
+				.setHTML(`${taxon_name}<br>${common_name}<br>${coordinates}<br>${objectid}`)
+				.addTo(map.current)
+				.addClassName('popup');
+		});
+
+		// Change the cursor to a pointer when the mouse is over the london-trees-data layer.
+		map.current.on('mouseenter', 'london-trees-data', () => {
+			map.current.getCanvas().style.cursor = 'pointer';
+		});
+
+		// Change it back to a pointer when it leaves.
+		map.current.on('mouseleave', 'london-trees-data', () => {
+			map.current.getCanvas().style.cursor = '';
 		});
 	});
 
