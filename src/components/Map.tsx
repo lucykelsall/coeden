@@ -33,9 +33,9 @@ export default function Map() {
 				'type': 'circle',
 				'source': {
 					'type': 'vector',
-					'url': 'mapbox://ljkelsall.74ym3hvl'
+					'url': 'mapbox://ljkelsall.9dfje61y'
 				},
-				'source-layer': 'TreeData1-197v8y',
+				'source-layer': 'Borough_tree_list_2021July_tr-4yabe5',
 				'paint': {
 					'circle-radius': [
 						'interpolate',
@@ -54,22 +54,18 @@ export default function Map() {
 
 		// When a click event occurs on a feature in the london-trees-data layer, open a popup at the
 		// location of the feature, with description HTML from its properties.
-		map.current.on('click', 'london-trees-data', (e) => {
+		map.current.on('click', 'london-trees-data', (e: any) => {
 			// Copy coordinates array.
 			const coordinates = e.features[0].geometry.coordinates.slice();
 			const taxon_name = e.features[0].properties.taxon_name;
-
-			// Ensure that if the map is zoomed out such that multiple
-			// copies of the feature are visible, the popup appears
-			// over the copy being pointed to.
-			while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-				coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-			}
+			const common_name = e.features[0].properties.common_name;
+			const objectid = e.features[0].properties.objectid;
 
 			new mapboxgl.Popup()
 				.setLngLat(coordinates)
-				.setHTML(taxon_name)
-				.addTo(map.current);
+				.setHTML(`${taxon_name}<br>${common_name}<br>${coordinates}<br>${objectid}`)
+				.addTo(map.current)
+				.addClassName('popup');
 		});
 
 		// Change the cursor to a pointer when the mouse is over the london-trees-data layer.
