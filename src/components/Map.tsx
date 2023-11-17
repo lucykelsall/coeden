@@ -2,6 +2,7 @@
 
 import React, { useRef, useEffect, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
+import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 
 mapboxgl.accessToken = 'pk.eyJ1IjoibGprZWxzYWxsIiwiYSI6ImNsb3NqOHRteTAweHAyanFlMmdwcHZnYmMifQ.bv7DEQoEvbx1gfUDS-dkWw';
 
@@ -52,6 +53,14 @@ export default function Map() {
 			});
 		});
 
+		// Adds search box to map
+		map.current.addControl(
+			new MapboxGeocoder({
+				accessToken: mapboxgl.accessToken,
+				mapboxgl: mapboxgl
+			})
+		);
+
 		// When a click event occurs on a feature in the london-trees-data layer, open a popup at the
 		// location of the feature, with description HTML from its properties.
 		map.current.on('click', 'london-trees-data', (e: any) => {
@@ -59,11 +68,10 @@ export default function Map() {
 			const coordinates = e.features[0].geometry.coordinates.slice();
 			const taxon_name = e.features[0].properties.taxon_name;
 			const common_name = e.features[0].properties.common_name;
-			const objectid = e.features[0].properties.objectid;
 
 			new mapboxgl.Popup()
 				.setLngLat(coordinates)
-				.setHTML(`${taxon_name}<br>${common_name}<br>${coordinates}<br>${objectid}`)
+				.setHTML(`${taxon_name}<br>${common_name}<br>${coordinates}`)
 				.addTo(map.current)
 				.addClassName('popup');
 		});
