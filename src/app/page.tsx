@@ -1,4 +1,5 @@
-import 'mapbox-gl/dist/mapbox-gl.css'; // stylesheet makes it display correctly
+import 'mapbox-gl/dist/mapbox-gl.css'; // stylesheet makes map display correctly
+import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css'; // stylesheet makes search box display correctly
 import Image from 'next/image';
 import Map from '../components/Map';
 
