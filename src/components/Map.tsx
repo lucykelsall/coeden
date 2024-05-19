@@ -51,6 +51,45 @@ export default function Map() {
 					'circle-color': 'rgb(0, 128, 0)'
 				}
 			});
+
+			const exampleTrees = ['Birch', 'Cherry', 'Lime', 'Maple', 'Mimosa', 'Oak', 'Pear', 'Sycamore']
+			const filterGroup = document.getElementById('filter-group');
+
+			// this function will be called whenever a checkbox is toggled
+			const updateLayerFilter = () => {
+				// get an array of icon names that corresponds to the currently checked checkboxes
+				const checkedSymbols = [...document.getElementsByTagName('input')]
+					.filter((el) => el.checked)
+					.map((el) => el.id);
+
+				// use an 'in' expression to filter the layer
+				map.current.setFilter('london-trees-data', ['in', 'common_name', ...checkedSymbols]);
+			};
+
+			// get an array of all unique `icon` properties
+			const symbols: string[] = [];
+
+			for (const feature of exampleTrees) {
+				//const symbol = feature.properties.icon;
+				if (!symbols.includes(feature)) symbols.push(feature);
+			}
+
+			// for each `icon` value, create a checkbox and label
+			for (const symbol of symbols) {
+				const input = document.createElement('input');
+				input.type = 'checkbox';
+				input.id = symbol;
+				input.checked = true;
+				filterGroup?.appendChild(input);
+
+				const label = document.createElement('label');
+				label.setAttribute('for', symbol);
+				label.textContent = symbol;
+				filterGroup?.appendChild(label);
+
+				// When any checkbox changes, update the filter.
+				input.addEventListener('change', updateLayerFilter);
+			};
 		});
 
 		// Adds search box to map
@@ -71,7 +110,7 @@ export default function Map() {
 
 			new mapboxgl.Popup()
 				.setLngLat(coordinates)
-				.setHTML(`${taxon_name}<br>${common_name}<br>${coordinates}`)
+				.setHTML(`${taxon_name}<br>${common_name}`)
 				.addTo(map.current)
 				.addClassName('popup');
 		});

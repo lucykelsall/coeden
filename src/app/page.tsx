@@ -27,6 +27,7 @@ export default function Home() {
 			</div>
 
 			<div>
+				<nav id="filter-group" className="filter-group"></nav>
 				<Map />
 			</div>
 
